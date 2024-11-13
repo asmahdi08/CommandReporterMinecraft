@@ -1,4 +1,5 @@
 name: CommandReporterPlugin
 version: '1.0-SNAPSHOT'
 main: me.ashfaq.commandReporterPlugin.CommandReporterPlugin
-api-version: '1.21'
+api-version: '1.21.1'
+description: "A spigot plugin that reports commands executed by players."
