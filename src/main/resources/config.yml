@@ -1,0 +1,57 @@
+# This file contains the settings for the Command Reporter Plugin.
+
+# This section contains the settings for the plugin's Discord webhook.
+webhook-url:
+webhook-username: Command Reporter
+webhook-avatar-url:
+embed-color: 65280
+embed-icon-url: https://i.imgur.com/ZTuP6fGb.jpg
+
+# Leave both of these empty if you don't want a footer.
+embed-footer-text: Sent From Command Reporter Plugin Minecraft
+embed-footer-icon-url:
+
+# Specify the discord role that will be mentioned if a suspicious command is executed.
+# DO NOT INCLUDE THE @ SYMBOL
+admin-role:
+
+# This list contains a list of all suspicious commands.
+suspicious-commands:
+- /op
+- /deop
+- /stop
+- /reload
+- /ban
+- /ban-ip
+- /kick
+- /whitelist
+- /whitelist add
+- /whitelist remove
+- /whitelist list
+- /whitelist reload
+- /whitelist on
+- /whitelist off
+- /pardon
+- /pardon-ip
+- /save-all
+- /save-off
+- /save-on
+- /plugins
+- /advancement
+- /attribute
+- /bossbar
+- /clear
+- /clone
+- /data
+- /datapack
+- /debug
+- /defaultgamemode
+- /difficulty
+- /effect
+- /enchant
+- /gamemode
+- /gamerule
+- /give
+- /kill
+- /locate
+- /locatebiome

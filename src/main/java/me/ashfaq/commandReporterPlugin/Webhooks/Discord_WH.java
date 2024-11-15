@@ -1,90 +1,102 @@
 package me.ashfaq.commandReporterPlugin.Webhooks;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.logging.Logger;
+
+import me.ashfaq.commandReporterPlugin.CommandReporterPlugin;
+import me.ashfaq.commandReporterPlugin.CommandReporterSettings;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 public class Discord_WH {
 
-    static String webhookurl = "https://discord.com/api/webhooks/1296440357722001419/5R7Mji5GtfzeerHAjeQoS6o2zXs0qrkqTp-ekBDi6j-72075BCO2penB3UolHPXDsWEJ";
+    private static final Logger logger = JavaPlugin.getPlugin(CommandReporterPlugin.class).getLogger();
 
-    public void sendRequest(@NotNull String webhookUrl, @NotNull String playerName, @NotNull String commandText, @NotNull Boolean suspicion) {
+
+    public void sendRequest(@NotNull String webhookUrl, @NotNull String playerName, @NotNull String commandText, boolean suspicion) {
 
         String titleText = "Command Executed";
         String msgText = "";
-        String adminRole = "everyone";
-        String embedColor = "65280";
-        String webhookAvatarURL = "https://i.imgur.com/wSeLqyM.jpeg";
-        String embedIconURL = "https://i.imgur.com/ZTuP6fGb.jpg";
-        String footerText = "";
-        String footerIconURL = "";
+        //String webhookURL = CommandReporterSettings.getInstance().getWebhookUrl();
+        String adminRole = CommandReporterSettings.getInstance().getAdminRole();
+        String embedColor = CommandReporterSettings.getInstance().getEmbedColor();
+        String webhookAvatarURL = CommandReporterSettings.getInstance().getWebhookAvatarURL();
+        String embedIconURL = CommandReporterSettings.getInstance().getEmbedIconURL();
+        String footerText = CommandReporterSettings.getInstance().getEmbedFooterText();
+        String footerIconURL = CommandReporterSettings.getInstance().getEmbedFooterIconURL();
+
+
 
         if(suspicion) {
             msgText = "@" + adminRole;
         }
 
-        URI requestUri = null;
+        URI requestUri;
         try {
             requestUri = new URI(webhookUrl);
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            logger.severe("Invalid URI: " + webhookUrl);
+            throw new RuntimeException("Failed to create URI", e);
         }
 
         if(suspicion) {
             titleText = "Suspicious Command Executed";
         }
 
+        String jsonPayload = "{\n" +
+                "  \"username\": \"Command Reporter Minecraft\",\n" +
+                "  \"avatar_url\": \"" + webhookAvatarURL + "\",\n" +
+                "  \"content\": \"" + msgText + "\",\n" +
+                "  \"embeds\": [\n" +
+                "    {\n" +
+                "      \"author\": {\n" +
+                "        \"name\": \"" + playerName + "\",\n" +
+                "        \"icon_url\": \"" + embedIconURL + "\"\n" +
+                "      },\n" +
+                "      \"title\": \"" + titleText + "\",\n" +
+                "      \"description\": \"Player executed the following command **" + commandText + "**.\",\n" +
+                "      \"color\": " + embedColor + ",\n" +
+                "      \"footer\": {\n" +
+                "        \"text\": \"" + footerText + "\",\n" +
+                "        \"icon_url\": \"" + footerIconURL + "\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}";
+
 
         HttpRequest postRequest = HttpRequest.newBuilder()
                 .uri(requestUri)
                 .header("Content-Type", "application/json")
                 .header("User-Agent", "CommandReporterPlugin-Minecraft")
-                .POST(HttpRequest.BodyPublishers.ofString("{\n" +
-                        "\t\"username\": \"Command Reporter Minecraft\",\n" +
-                        "\t\"avatar_url\": \""+webhookAvatarURL+"\",\n" +
-                        "\t\"content\": \""+msgText+"\",\n" +
-                        "\t\"embeds\": [\n" +
-                        "\t\t{\n" +
-                        "\t\t\t\"author\": {\n" +
-                        "\t\t\t\t\"name\": \""+ playerName + "\",\n" +
-                        "\t\t\t\t\"icon_url\": \""+embedIconURL+"\"\n" +
-                        "\t\t\t},\n" +
-                        "\t\t\t\"title\": \""+titleText+"\",\n" +
-                        "\t\t\t\"description\": \"Player executed the following command **"+commandText+"**.\",\n" +
-                        "\t\t\t\"color\": "+embedColor+"\n" +
-                        "\t\t\t\"footer\": {\n" +
-                        "\t\t\t\t\"text\": \""+ footerText + "\",\n" +
-                        "\t\t\t\t\"icon_url\": \""+ footerIconURL + "\",\n" +
-                        "\t\t}\n" +
-                        "\t]\n" +
-                        "}"))
+                .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
                 .build();
 
 
         HttpClient httpClient = HttpClient.newHttpClient();
         try {
             HttpResponse<String> postResponse = httpClient.send(postRequest, HttpResponse.BodyHandlers.ofString());
-            //System.out.println("Status: " + postResponse.statusCode());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+            System.out.println("Status: " + postResponse.statusCode());
+        } catch (IOException | InterruptedException e) {
+            logger.severe("Failed to send request to Discord");
             throw new RuntimeException(e);
         }
 
 
     }
 
-    /*
+/*
     public static void main(String[] args) {
-        new Discord_WH().sendRequest(webhookurl, "Bara","/fill", true);
+        String webhookURL = CommandReporterSettings.getInstance().getWebhookUrl();
+        new Discord_WH().sendRequest("https://discord.com/api/webhooks/<webhookID>", "test","/test", true);
     }
-     */
+
+ */
+
 
 }
