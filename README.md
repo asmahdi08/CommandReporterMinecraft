@@ -2,7 +2,7 @@
 
 The Command Reporter Plugin is a Minecraft plugin that reports player commands to a Discord webhook. It is designed to help server administrators monitor and manage player activities by sending notifications to a specified Discord channel.
 
-**Curseforge** : (https://www.curseforge.com/minecraft/bukkit-plugins/command-reporter)
+**Curseforge** : https://www.curseforge.com/minecraft/bukkit-plugins/command-reporter
 
 ## Features
 
